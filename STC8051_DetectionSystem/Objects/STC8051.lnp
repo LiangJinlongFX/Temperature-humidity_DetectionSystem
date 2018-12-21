@@ -1,7 +1,8 @@
 ".\Objects\STARTUP.obj",
 ".\Objects\main.obj",
-".\Objects\lcd1602.obj",
+".\Objects\sys.obj",
+".\Objects\uart.obj",
 ".\Objects\DHT11.obj",
-".\Objects\sys.obj" 
+".\Objects\lcd1602.obj" 
 TO ".\Objects\STC8051" 
 PRINT(".\Listings\STC8051.m51") RAMSIZE(256) 

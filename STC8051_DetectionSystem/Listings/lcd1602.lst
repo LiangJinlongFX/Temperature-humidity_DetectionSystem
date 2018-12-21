@@ -1,10 +1,10 @@
-C51 COMPILER V9.56.0.0   LCD1602                                                           12/15/2018 17:18:59 PAGE 1   
+C51 COMPILER V9.56.0.0   LCD1602                                                           12/21/2018 23:06:38 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE LCD1602
 OBJECT MODULE PLACED IN .\Objects\lcd1602.obj
-COMPILER INVOKED BY: D:\Program Files\MDK\C51\BIN\C51.EXE lcd1602.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\STC8051_Detection
-                    -System) DEBUG OBJECTEXTEND PRINT(.\Listings\lcd1602.lst) TABS(2) OBJECT(.\Objects\lcd1602.obj)
+COMPILER INVOKED BY: D:\Program Files\MDK\C51\BIN\C51.EXE lcd1602.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(..\STC8051_Det
+                    -ectionSystem) DEBUG OBJECTEXTEND PRINT(.\Listings\lcd1602.lst) TABS(2) OBJECT(.\Objects\lcd1602.obj)
 
 line level    source
 
@@ -60,123 +60,120 @@ line level    source
   50   1        LCD_DATA = cmd;
   51   1        LCD_RS = 0;
   52   1        LCD_RW = 0;
-  53   1        LCD_EN = 0;
-  54   1        LCD_EN = 0;
-C51 COMPILER V9.56.0.0   LCD1602                                                           12/15/2018 17:18:59 PAGE 2   
+  53   1        LCD_DelayUs(800);
+  54   1        LCD_EN = 1;
+C51 COMPILER V9.56.0.0   LCD1602                                                           12/21/2018 23:06:38 PAGE 2   
 
-  55   1        LCD_EN = 1;
-  56   1        LCD_DelayUs(200);
-  57   1        LCD_EN = 0;
-  58   1      }
-  59          
-  60          /**
-  61           * 往LCD1602写数据
-  62           * @param   
-  63           * @return 
-  64           * @brief 
-  65           **/
-  66          void LCD1602_WriteData(uint8 DisplayData)
-  67          {
-  68   1        //while(LCD1602_ReadBusy());
-  69   1        LCD_DATA = DisplayData;
-  70   1        LCD_RS = 1;
-  71   1        LCD_RW = 0;
-  72   1        LCD_EN = 0;
-  73   1        LCD_EN = 0;
-  74   1        LCD_EN = 1;
-  75   1        LCD_DelayUs(200);
-  76   1        LCD_EN = 0;
-  77   1      }
-  78          
-  79          /**
-  80           * 初始化LCD1602
-  81           * @param   
-  82           * @return 
-  83           * @brief 
-  84           **/
-  85          void LCD1602_Init(void)
-  86          {
-  87   1        LCD_DATA = 0;
-  88   1        // 三次显示模式设置,不检测忙信号
-  89   1        LCD1602_WriteCmd(0x38,0);
-  90   1        LCD_DelayMs(5);
-  91   1        LCD1602_WriteCmd(0x38,0);
-  92   1        LCD_DelayMs(5);
-  93   1        LCD1602_WriteCmd(0x38,0);
-  94   1        LCD_DelayMs(5);
-  95   1        
-  96   1        LCD1602_WriteCmd(0x38,0); //显示模式设置
-  97   1        LCD1602_WriteCmd(0x08,0); //关闭显示
-  98   1        LCD1602_WriteCmd(0x01,0); //显示清屏
-  99   1        LCD1602_WriteCmd(0x06,0); //显示光标移动设置
- 100   1        LCD1602_WriteCmd(0x0c,0); //显示开及光标设置
- 101   1        
- 102   1      }
- 103          
- 104          /**
- 105           * 在指定位置显示一个字符
- 106           * @param   
- 107           * @return 
- 108           * @brief 
- 109           **/
- 110          void LCD1602_DisplayChar(uint8 x, uint8 y, uint8 DisplayChar)
- 111          {
- 112   1        // 限制x不能大于15, y不能大于1
- 113   1        y &= 0x01;
- 114   1        x &= 0x0f;
- 115   1        // 当要显示第二行时地址码+0x40
- 116   1        if(y) x |= 0x40;
-C51 COMPILER V9.56.0.0   LCD1602                                                           12/15/2018 17:18:59 PAGE 3   
+  55   1        LCD_DelayUs(800);
+  56   1        LCD_EN = 0;
+  57   1      }
+  58          
+  59          /**
+  60           * 往LCD1602写数据
+  61           * @param   
+  62           * @return 
+  63           * @brief 
+  64           **/
+  65          void LCD1602_WriteData(uint8 DisplayData)
+  66          {
+  67   1        //while(LCD1602_ReadBusy());
+  68   1        LCD_DATA = DisplayData;
+  69   1        LCD_RS = 1;
+  70   1        LCD_RW = 0;
+  71   1        LCD_DelayUs(800);
+  72   1        LCD_EN = 1;
+  73   1        LCD_DelayUs(800);
+  74   1        LCD_EN = 0;
+  75   1      }
+  76          
+  77          /**
+  78           * 初始化LCD1602
+  79           * @param   
+  80           * @return 
+  81           * @brief 
+  82           **/
+  83          void LCD1602_Init(void)
+  84          {
+  85   1        // 三次显示模式设置,不检测忙信号
+  86   1        LCD1602_WriteCmd(0x38,0);
+  87   1        LCD_DelayMs(5);
+  88   1        LCD1602_WriteCmd(0x38,0);
+  89   1        LCD_DelayMs(5);
+  90   1        LCD1602_WriteCmd(0x38,0);
+  91   1        LCD_DelayMs(5);
+  92   1        
+  93   1        LCD1602_WriteCmd(0x38,0); //显示模式设置
+  94   1        LCD1602_WriteCmd(0x08,0); //关闭显示
+  95   1        LCD1602_WriteCmd(0x01,0); //显示清屏
+  96   1        LCD1602_WriteCmd(0x06,0); //显示光标移动设置
+  97   1        LCD1602_WriteCmd(0x0c,0); //显示开及光标设置
+  98   1        
+  99   1      }
+ 100          
+ 101          /**
+ 102           * 在指定位置显示一个字符
+ 103           * @param   
+ 104           * @return 
+ 105           * @brief 
+ 106           **/
+ 107          void LCD1602_DisplayChar(uint8 x, uint8 y, uint8 DisplayChar)
+ 108          {
+ 109   1        // 限制x不能大于15, y不能大于1
+ 110   1        y &= 0x01;
+ 111   1        x &= 0x0f;
+ 112   1        // 当要显示第二行时地址码+0x40
+ 113   1        if(y) x |= 0x40;
+ 114   1        x |= 0x80;  //算出地址码
+ 115   1        LCD1602_WriteCmd(x,0);
+ 116   1        LCD1602_WriteData(DisplayChar);
+C51 COMPILER V9.56.0.0   LCD1602                                                           12/21/2018 23:06:38 PAGE 3   
 
- 117   1        x |= 0x80;  //算出地址码
- 118   1        LCD1602_WriteCmd(x,0);
- 119   1        LCD1602_WriteData(DisplayChar);
- 120   1      }
- 121          
- 122          /**
- 123           * 在指定位置开始显示字符串
- 124           * @param   
- 125           * @return 
- 126           * @brief 
- 127           **/
- 128          void LCD1602_DisplayString(uint8 x, uint8 y, uint8 code *String)
- 129          {
- 130   1        uint8 length=0;
- 131   1        
- 132   1        // 限制x不能大于15, y不能大于1
- 133   1        y &= 0x01;
- 134   1        x &= 0x0f;
- 135   1        // 若到达字符串尾则退出
- 136   1        while(String[length]>=0x20)
- 137   1        {
- 138   2          if(x <= 0x0f)
- 139   2          {
- 140   3            LCD1602_DisplayChar(x,y,String[length]);
- 141   3            length++;
- 142   3            x++;
- 143   3          }
- 144   2        }
- 145   1      }
- 146          
- 147          /**
- 148           * 清屏
- 149           * @param   
- 150           * @return 
- 151           * @brief 
- 152           **/
- 153          void LCD1602_Clear(void)
- 154          {
- 155   1        LCD1602_WriteCmd(0x01,0);
- 156   1        LCD1602_WriteCmd(0x02,0);
- 157   1      }
+ 117   1      }
+ 118          
+ 119          /**
+ 120           * 在指定位置开始显示字符串
+ 121           * @param   
+ 122           * @return 
+ 123           * @brief 
+ 124           **/
+ 125          void LCD1602_DisplayString(uint8 x, uint8 y, uint8 code *String)
+ 126          {
+ 127   1        uint8 length=0;
+ 128   1        
+ 129   1        // 限制x不能大于15, y不能大于1
+ 130   1        y &= 0x01;
+ 131   1        x &= 0x0f;
+ 132   1        // 若到达字符串尾则退出
+ 133   1        while(String[length]>=0x20)
+ 134   1        {
+ 135   2          if(x <= 0x0f)
+ 136   2          {
+ 137   3            LCD1602_DisplayChar(x,y,String[length]);
+ 138   3            length++;
+ 139   3            x++;
+ 140   3          }
+ 141   2        }
+ 142   1      }
+ 143          
+ 144          /**
+ 145           * 清屏
+ 146           * @param   
+ 147           * @return 
+ 148           * @brief 
+ 149           **/
+ 150          void LCD1602_Clear(void)
+ 151          {
+ 152   1        LCD1602_WriteCmd(0x01,0);
+ 153   1        LCD1602_WriteCmd(0x02,0);
+ 154   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    271    ----
+   CODE SIZE        =    324    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =   ----    ----
+   XDATA SIZE       =   ----       7
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----       7
+   DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

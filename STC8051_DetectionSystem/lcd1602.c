@@ -50,10 +50,9 @@ void LCD1602_WriteCmd(uint8 cmd, uint8 BusyFlag)
 	LCD_DATA = cmd;
 	LCD_RS = 0;
 	LCD_RW = 0;
-	LCD_EN = 0;
-	LCD_EN = 0;
+	LCD_DelayUs(800);
 	LCD_EN = 1;
-	LCD_DelayUs(200);
+	LCD_DelayUs(800);
 	LCD_EN = 0;
 }
 
@@ -69,10 +68,9 @@ void LCD1602_WriteData(uint8 DisplayData)
 	LCD_DATA = DisplayData;
 	LCD_RS = 1;
 	LCD_RW = 0;
-	LCD_EN = 0;
-	LCD_EN = 0;
+	LCD_DelayUs(800);
 	LCD_EN = 1;
-	LCD_DelayUs(200);
+	LCD_DelayUs(800);
 	LCD_EN = 0;
 }
 
@@ -84,7 +82,6 @@ void LCD1602_WriteData(uint8 DisplayData)
  **/
 void LCD1602_Init(void)
 {
-	LCD_DATA = 0;
 	// 三次显示模式设置,不检测忙信号
 	LCD1602_WriteCmd(0x38,0);
 	LCD_DelayMs(5);

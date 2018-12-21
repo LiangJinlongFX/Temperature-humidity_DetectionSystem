@@ -1,1 +1,1 @@
-"sys.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(..\STC8051_DetectionSystem) DEBUG OBJECTEXTEND PRINT(.\Listings\sys.lst) TABS (2) OBJECT(.\Objects\sys.obj)
+"sys.c" LARGE OPTIMIZE (8,SPEED) BROWSE INCDIR(..\STC8051_DetectionSystem) DEBUG OBJECTEXTEND PRINT(.\Listings\sys.lst) TABS (2) OBJECT(.\Objects\sys.obj)

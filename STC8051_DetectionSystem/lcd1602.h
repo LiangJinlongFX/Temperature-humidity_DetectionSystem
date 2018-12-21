@@ -1,7 +1,7 @@
 #ifndef _LCD1602_H
 #define _LCD1602_H
 
-#include <reg51.h>
+#include "stc89c5xrc.h"
 #include "sys.h"
 
 /* 数据类型修饰符重定义 */
@@ -13,6 +13,9 @@
 
 /* LCD1602 硬件接口配置 */
 #define LCD_DATA P0
+//sbit LCD_RW = P2^4;
+//sbit LCD_RS = P2^3;
+//sbit LCD_EN = P2^5;
 sbit LCD_RW = P2^1;
 sbit LCD_RS = P2^0;
 sbit LCD_EN = P2^2;
