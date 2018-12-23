@@ -65,16 +65,12 @@ u8 DHT11_ReadData(DHT11Data_Type *pp)
    	  pp->RH_L=U8RH_data_L_temp;
 	    pp->T_H=U8T_data_H_temp;
    	  pp->T_L=U8T_data_L_temp;
+		  pp->CheckData=U8checkdata_temp;
 		 
 		  return 0;
    }
 	 else
 	 {
-   	  pp->RH_H=U8RH_data_H_temp;
-   	  pp->RH_L=U8RH_data_L_temp;
-	    pp->T_H=U8T_data_H_temp;
-   	  pp->T_L=U8T_data_L_temp;
-			pp->CheckData = U8checkdata_temp;
 		  return 3;
 	 }
 

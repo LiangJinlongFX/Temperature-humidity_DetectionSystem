@@ -1,4 +1,5 @@
 #include "lcd1602.h"
+#include "DHT11.h"
 
 
 /**
@@ -50,9 +51,10 @@ void LCD1602_WriteCmd(uint8 cmd, uint8 BusyFlag)
 	LCD_DATA = cmd;
 	LCD_RS = 0;
 	LCD_RW = 0;
-	LCD_DelayUs(800);
+	LCD_EN = 0;
+	LCD_EN = 0;
 	LCD_EN = 1;
-	LCD_DelayUs(800);
+	LCD_DelayUs(200);
 	LCD_EN = 0;
 }
 
@@ -68,9 +70,10 @@ void LCD1602_WriteData(uint8 DisplayData)
 	LCD_DATA = DisplayData;
 	LCD_RS = 1;
 	LCD_RW = 0;
-	LCD_DelayUs(800);
+	LCD_EN = 0;
+	LCD_EN = 0;
 	LCD_EN = 1;
-	LCD_DelayUs(800);
+	LCD_DelayUs(200);
 	LCD_EN = 0;
 }
 
@@ -122,24 +125,85 @@ void LCD1602_DisplayChar(uint8 x, uint8 y, uint8 DisplayChar)
  * @return 
  * @brief 
  **/
-void LCD1602_DisplayString(uint8 x, uint8 y, uint8 code *String)
+void LCD1602_DisplayString(uint8 x, uint8 y, uint8 *String)
 {
-	uint8 length=0;
-	
-	// 限制x不能大于15, y不能大于1
-	y &= 0x01;
-	x &= 0x0f;
-	// 若到达字符串尾则退出
-	while(String[length]>=0x20)
-	{
-		if(x <= 0x0f)
-		{
-			LCD1602_DisplayChar(x,y,String[length]);
-			length++;
-			x++;
-		}
+	if (y == 0) 
+	{     
+		LCD1602_WriteCmd(0x80 + x,0);     //表示第一行
+	}
+	else 
+	{      
+		LCD1602_WriteCmd(0xC0 + x,0);      //表示第二行
+	}        
+	while (*String) 
+	{     
+		LCD1602_WriteData(*String);     
+		String ++;     
 	}
 }
+
+void LCD1602_DisplayData(DHT11Data_Type *pp)
+{
+	char tmp[10];
+	u8 count;
+	
+	/* 显示湿度 */
+	// 显示湿度整数位
+	count = my_itoa(pp->RH_H,tmp);
+	LCD1602_WriteCmd(0xC0 + 7,0);
+	if(count==1)
+	{
+		LCD1602_WriteData(' ');
+		LCD1602_WriteData(tmp[0]);
+	}
+	else
+	{
+		LCD1602_WriteData(tmp[0]);
+		LCD1602_WriteData(tmp[1]);
+	}
+	// 显示湿度小数位
+	count = my_itoa(pp->RH_L,tmp);
+	LCD1602_WriteCmd(0xC0 + 10,0);
+	if(count==1)
+	{
+		LCD1602_WriteData(tmp[0]);
+		LCD1602_WriteData(' ');
+	}
+	else
+	{
+		LCD1602_WriteData(tmp[0]);
+		LCD1602_WriteData(tmp[1]);
+	}
+	/* 显示温度部分 */
+	// 显示温度整数
+	count = my_itoa(pp->T_H,tmp);
+	LCD1602_WriteCmd(0x80 + 7,0);
+	if(count==1)
+	{
+		LCD1602_WriteData(' ');
+		LCD1602_WriteData(tmp[0]);
+	}
+	else
+	{
+		LCD1602_WriteData(tmp[0]);
+		LCD1602_WriteData(tmp[1]);
+	}
+	// 显示温度小数
+	count = my_itoa(pp->T_L,tmp);
+	LCD1602_WriteCmd(0x80 + 10,0);
+	if(count==1)
+	{
+		LCD1602_WriteData(tmp[0]);
+		LCD1602_WriteData(' ');
+	}
+	else
+	{
+		LCD1602_WriteData(tmp[0]);
+		LCD1602_WriteData(tmp[1]);
+	}
+	
+}
+
 
 /**
  * 清屏

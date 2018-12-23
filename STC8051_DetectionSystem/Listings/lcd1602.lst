@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   LCD1602                                                           12/21/2018 23:06:38 PAGE 1   
+C51 COMPILER V9.56.0.0   LCD1602                                                           12/23/2018 22:03:59 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE LCD1602
@@ -9,169 +9,235 @@ COMPILER INVOKED BY: D:\Program Files\MDK\C51\BIN\C51.EXE lcd1602.c LARGE OPTIMI
 line level    source
 
    1          #include "lcd1602.h"
-   2          
+   2          #include "DHT11.h"
    3          
-   4          /**
-   5           * 从LCD1602读取数据
-   6           * @param   
-   7           * @return 
-   8           * @brief 
-   9           **/
-  10          uint8 LCD1602_ReadData(void)
-  11          {
-  12   1        LCD_RS = 1;
-  13   1        LCD_RW = 1;
-  14   1        LCD_EN = 0;
+   4          
+   5          /**
+   6           * 从LCD1602读取数据
+   7           * @param   
+   8           * @return 
+   9           * @brief 
+  10           **/
+  11          uint8 LCD1602_ReadData(void)
+  12          {
+  13   1        LCD_RS = 1;
+  14   1        LCD_RW = 1;
   15   1        LCD_EN = 0;
-  16   1        LCD_DelayUs(200);
-  17   1        LCD_EN = 1;
-  18   1        
-  19   1        return LCD_DATA;
-  20   1      }
-  21          
-  22          /**
-  23           * 检测LCD1602繁忙状态
-  24           * @param   
-  25           * @return 
-  26           * @brief 
-  27           **/
-  28          uint8 LCD1602_ReadBusy(void)
-  29          {
-  30   1        LCD_DATA = 0xff;
-  31   1        LCD_RS = 0;
-  32   1        LCD_RW = 1;
-  33   1        LCD_EN = 0;
+  16   1        LCD_EN = 0;
+  17   1        LCD_DelayUs(200);
+  18   1        LCD_EN = 1;
+  19   1        
+  20   1        return LCD_DATA;
+  21   1      }
+  22          
+  23          /**
+  24           * 检测LCD1602繁忙状态
+  25           * @param   
+  26           * @return 
+  27           * @brief 
+  28           **/
+  29          uint8 LCD1602_ReadBusy(void)
+  30          {
+  31   1        LCD_DATA = 0xff;
+  32   1        LCD_RS = 0;
+  33   1        LCD_RW = 1;
   34   1        LCD_EN = 0;
-  35   1        LCD_DelayUs(200);
-  36   1        LCD_EN = 1;
-  37   1        
-  38   1        return (LCD_DATA & BUSY);
-  39   1      }
-  40          
-  41          /**
-  42           * 往LCD1602写指令
-  43           * @param   
-  44           * @return 
-  45           * @brief 
-  46           **/
-  47          void LCD1602_WriteCmd(uint8 cmd, uint8 BusyFlag)
-  48          {
-  49   1        if(BusyFlag) while(LCD1602_ReadBusy());
-  50   1        LCD_DATA = cmd;
-  51   1        LCD_RS = 0;
-  52   1        LCD_RW = 0;
-  53   1        LCD_DelayUs(800);
-  54   1        LCD_EN = 1;
-C51 COMPILER V9.56.0.0   LCD1602                                                           12/21/2018 23:06:38 PAGE 2   
+  35   1        LCD_EN = 0;
+  36   1        LCD_DelayUs(200);
+  37   1        LCD_EN = 1;
+  38   1        
+  39   1        return (LCD_DATA & BUSY);
+  40   1      }
+  41          
+  42          /**
+  43           * 往LCD1602写指令
+  44           * @param   
+  45           * @return 
+  46           * @brief 
+  47           **/
+  48          void LCD1602_WriteCmd(uint8 cmd, uint8 BusyFlag)
+  49          {
+  50   1        if(BusyFlag) while(LCD1602_ReadBusy());
+  51   1        LCD_DATA = cmd;
+  52   1        LCD_RS = 0;
+  53   1        LCD_RW = 0;
+  54   1        LCD_EN = 0;
+C51 COMPILER V9.56.0.0   LCD1602                                                           12/23/2018 22:03:59 PAGE 2   
 
-  55   1        LCD_DelayUs(800);
-  56   1        LCD_EN = 0;
-  57   1      }
-  58          
-  59          /**
-  60           * 往LCD1602写数据
-  61           * @param   
-  62           * @return 
-  63           * @brief 
-  64           **/
-  65          void LCD1602_WriteData(uint8 DisplayData)
-  66          {
-  67   1        //while(LCD1602_ReadBusy());
-  68   1        LCD_DATA = DisplayData;
-  69   1        LCD_RS = 1;
-  70   1        LCD_RW = 0;
-  71   1        LCD_DelayUs(800);
-  72   1        LCD_EN = 1;
-  73   1        LCD_DelayUs(800);
+  55   1        LCD_EN = 0;
+  56   1        LCD_EN = 1;
+  57   1        LCD_DelayUs(200);
+  58   1        LCD_EN = 0;
+  59   1      }
+  60          
+  61          /**
+  62           * 往LCD1602写数据
+  63           * @param   
+  64           * @return 
+  65           * @brief 
+  66           **/
+  67          void LCD1602_WriteData(uint8 DisplayData)
+  68          {
+  69   1        //while(LCD1602_ReadBusy());
+  70   1        LCD_DATA = DisplayData;
+  71   1        LCD_RS = 1;
+  72   1        LCD_RW = 0;
+  73   1        LCD_EN = 0;
   74   1        LCD_EN = 0;
-  75   1      }
-  76          
-  77          /**
-  78           * 初始化LCD1602
-  79           * @param   
-  80           * @return 
-  81           * @brief 
-  82           **/
-  83          void LCD1602_Init(void)
-  84          {
-  85   1        // 三次显示模式设置,不检测忙信号
-  86   1        LCD1602_WriteCmd(0x38,0);
-  87   1        LCD_DelayMs(5);
-  88   1        LCD1602_WriteCmd(0x38,0);
-  89   1        LCD_DelayMs(5);
-  90   1        LCD1602_WriteCmd(0x38,0);
-  91   1        LCD_DelayMs(5);
-  92   1        
-  93   1        LCD1602_WriteCmd(0x38,0); //显示模式设置
-  94   1        LCD1602_WriteCmd(0x08,0); //关闭显示
-  95   1        LCD1602_WriteCmd(0x01,0); //显示清屏
-  96   1        LCD1602_WriteCmd(0x06,0); //显示光标移动设置
-  97   1        LCD1602_WriteCmd(0x0c,0); //显示开及光标设置
-  98   1        
-  99   1      }
- 100          
- 101          /**
- 102           * 在指定位置显示一个字符
- 103           * @param   
- 104           * @return 
- 105           * @brief 
- 106           **/
- 107          void LCD1602_DisplayChar(uint8 x, uint8 y, uint8 DisplayChar)
- 108          {
- 109   1        // 限制x不能大于15, y不能大于1
- 110   1        y &= 0x01;
- 111   1        x &= 0x0f;
- 112   1        // 当要显示第二行时地址码+0x40
- 113   1        if(y) x |= 0x40;
- 114   1        x |= 0x80;  //算出地址码
- 115   1        LCD1602_WriteCmd(x,0);
- 116   1        LCD1602_WriteData(DisplayChar);
-C51 COMPILER V9.56.0.0   LCD1602                                                           12/21/2018 23:06:38 PAGE 3   
+  75   1        LCD_EN = 1;
+  76   1        LCD_DelayUs(200);
+  77   1        LCD_EN = 0;
+  78   1      }
+  79          
+  80          /**
+  81           * 初始化LCD1602
+  82           * @param   
+  83           * @return 
+  84           * @brief 
+  85           **/
+  86          void LCD1602_Init(void)
+  87          {
+  88   1        // 三次显示模式设置,不检测忙信号
+  89   1        LCD1602_WriteCmd(0x38,0);
+  90   1        LCD_DelayMs(5);
+  91   1        LCD1602_WriteCmd(0x38,0);
+  92   1        LCD_DelayMs(5);
+  93   1        LCD1602_WriteCmd(0x38,0);
+  94   1        LCD_DelayMs(5);
+  95   1        
+  96   1        LCD1602_WriteCmd(0x38,0); //显示模式设置
+  97   1        LCD1602_WriteCmd(0x08,0); //关闭显示
+  98   1        LCD1602_WriteCmd(0x01,0); //显示清屏
+  99   1        LCD1602_WriteCmd(0x06,0); //显示光标移动设置
+ 100   1        LCD1602_WriteCmd(0x0c,0); //显示开及光标设置
+ 101   1        
+ 102   1      }
+ 103          
+ 104          /**
+ 105           * 在指定位置显示一个字符
+ 106           * @param   
+ 107           * @return 
+ 108           * @brief 
+ 109           **/
+ 110          void LCD1602_DisplayChar(uint8 x, uint8 y, uint8 DisplayChar)
+ 111          {
+ 112   1        // 限制x不能大于15, y不能大于1
+ 113   1        y &= 0x01;
+ 114   1        x &= 0x0f;
+ 115   1        // 当要显示第二行时地址码+0x40
+ 116   1        if(y) x |= 0x40;
+C51 COMPILER V9.56.0.0   LCD1602                                                           12/23/2018 22:03:59 PAGE 3   
 
- 117   1      }
- 118          
- 119          /**
- 120           * 在指定位置开始显示字符串
- 121           * @param   
- 122           * @return 
- 123           * @brief 
- 124           **/
- 125          void LCD1602_DisplayString(uint8 x, uint8 y, uint8 code *String)
- 126          {
- 127   1        uint8 length=0;
- 128   1        
- 129   1        // 限制x不能大于15, y不能大于1
- 130   1        y &= 0x01;
- 131   1        x &= 0x0f;
- 132   1        // 若到达字符串尾则退出
- 133   1        while(String[length]>=0x20)
- 134   1        {
- 135   2          if(x <= 0x0f)
- 136   2          {
- 137   3            LCD1602_DisplayChar(x,y,String[length]);
- 138   3            length++;
- 139   3            x++;
- 140   3          }
- 141   2        }
- 142   1      }
- 143          
- 144          /**
- 145           * 清屏
- 146           * @param   
- 147           * @return 
- 148           * @brief 
- 149           **/
- 150          void LCD1602_Clear(void)
- 151          {
- 152   1        LCD1602_WriteCmd(0x01,0);
- 153   1        LCD1602_WriteCmd(0x02,0);
- 154   1      }
+ 117   1        x |= 0x80;  //算出地址码
+ 118   1        LCD1602_WriteCmd(x,0);
+ 119   1        LCD1602_WriteData(DisplayChar);
+ 120   1      }
+ 121          
+ 122          /**
+ 123           * 在指定位置开始显示字符串
+ 124           * @param   
+ 125           * @return 
+ 126           * @brief 
+ 127           **/
+ 128          void LCD1602_DisplayString(uint8 x, uint8 y, uint8 *String)
+ 129          {
+ 130   1        if (y == 0) 
+ 131   1        {     
+ 132   2          LCD1602_WriteCmd(0x80 + x,0);     //表示第一行
+ 133   2        }
+ 134   1        else 
+ 135   1        {      
+ 136   2          LCD1602_WriteCmd(0xC0 + x,0);      //表示第二行
+ 137   2        }        
+ 138   1        while (*String) 
+ 139   1        {     
+ 140   2          LCD1602_WriteData(*String);     
+ 141   2          String ++;     
+ 142   2        }
+ 143   1      }
+ 144          
+ 145          void LCD1602_DisplayData(DHT11Data_Type *pp)
+ 146          {
+ 147   1        char tmp[10];
+ 148   1        u8 count;
+ 149   1        
+ 150   1        /* 显示湿度 */
+ 151   1        // 显示湿度整数位
+ 152   1        count = my_itoa(pp->RH_H,tmp);
+ 153   1        LCD1602_WriteCmd(0xC0 + 7,0);
+ 154   1        if(count==1)
+ 155   1        {
+ 156   2          LCD1602_WriteData(' ');
+ 157   2          LCD1602_WriteData(tmp[0]);
+ 158   2        }
+ 159   1        else
+ 160   1        {
+ 161   2          LCD1602_WriteData(tmp[0]);
+ 162   2          LCD1602_WriteData(tmp[1]);
+ 163   2        }
+ 164   1        // 显示湿度小数位
+ 165   1        count = my_itoa(pp->RH_L,tmp);
+ 166   1        LCD1602_WriteCmd(0xC0 + 10,0);
+ 167   1        if(count==1)
+ 168   1        {
+ 169   2          LCD1602_WriteData(tmp[0]);
+ 170   2          LCD1602_WriteData(' ');
+ 171   2        }
+ 172   1        else
+ 173   1        {
+ 174   2          LCD1602_WriteData(tmp[0]);
+ 175   2          LCD1602_WriteData(tmp[1]);
+ 176   2        }
+ 177   1        /* 显示温度部分 */
+ 178   1        // 显示温度整数
+C51 COMPILER V9.56.0.0   LCD1602                                                           12/23/2018 22:03:59 PAGE 4   
+
+ 179   1        count = my_itoa(pp->T_H,tmp);
+ 180   1        LCD1602_WriteCmd(0x80 + 7,0);
+ 181   1        if(count==1)
+ 182   1        {
+ 183   2          LCD1602_WriteData(' ');
+ 184   2          LCD1602_WriteData(tmp[0]);
+ 185   2        }
+ 186   1        else
+ 187   1        {
+ 188   2          LCD1602_WriteData(tmp[0]);
+ 189   2          LCD1602_WriteData(tmp[1]);
+ 190   2        }
+ 191   1        // 显示温度小数
+ 192   1        count = my_itoa(pp->T_L,tmp);
+ 193   1        LCD1602_WriteCmd(0x80 + 10,0);
+ 194   1        if(count==1)
+ 195   1        {
+ 196   2          LCD1602_WriteData(tmp[0]);
+ 197   2          LCD1602_WriteData(' ');
+ 198   2        }
+ 199   1        else
+ 200   1        {
+ 201   2          LCD1602_WriteData(tmp[0]);
+ 202   2          LCD1602_WriteData(tmp[1]);
+ 203   2        }
+ 204   1        
+ 205   1      }
+ 206          
+ 207          
+ 208          /**
+ 209           * 清屏
+ 210           * @param   
+ 211           * @return 
+ 212           * @brief 
+ 213           **/
+ 214          void LCD1602_Clear(void)
+ 215          {
+ 216   1        LCD1602_WriteCmd(0x01,0);
+ 217   1        LCD1602_WriteCmd(0x02,0);
+ 218   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    324    ----
+   CODE SIZE        =    575    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =   ----       7
+   XDATA SIZE       =   ----      20
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

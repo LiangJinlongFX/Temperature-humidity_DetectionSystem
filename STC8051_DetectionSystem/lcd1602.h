@@ -3,6 +3,7 @@
 
 #include "stc89c5xrc.h"
 #include "sys.h"
+#include "DHT11.h"
 
 /* 数据类型修饰符重定义 */
 #define uint8 unsigned char
@@ -13,12 +14,9 @@
 
 /* LCD1602 硬件接口配置 */
 #define LCD_DATA P0
-//sbit LCD_RW = P2^4;
-//sbit LCD_RS = P2^3;
-//sbit LCD_EN = P2^5;
-sbit LCD_RW = P2^1;
-sbit LCD_RS = P2^0;
-sbit LCD_EN = P2^2;
+sbit LCD_RW = P1^1;
+sbit LCD_RS = P1^0;
+sbit LCD_EN = P2^5;
 
 /* LCD1602 调用函数设置 */
 #define LCD_DelayMs(x) delay_ms(x)
@@ -26,7 +24,8 @@ sbit LCD_EN = P2^2;
 
 void LCD1602_Init(void);
 void LCD1602_DisplayChar(uint8 x, uint8 y, uint8 DisplayChar);
-void LCD1602_DisplayString(uint8 x, uint8 y, uint8 code *String);
+void LCD1602_DisplayString(uint8 x, uint8 y, uint8 *String);
+void LCD1602_DisplayData(DHT11Data_Type *pp);
 void LCD1602_Clear(void);
 
 static void LCD1602_WriteCmd(uint8 cmd, uint8 BusyFlag);

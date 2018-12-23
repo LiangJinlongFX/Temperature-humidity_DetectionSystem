@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   DHT11                                                             12/21/2018 23:06:37 PAGE 1   
+C51 COMPILER V9.56.0.0   DHT11                                                             12/23/2018 22:03:58 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE DHT11
@@ -62,7 +62,7 @@ line level    source
   52   1         //数据接收状态    
   53   1         U8RH_data_H_temp=DHT11_COM();
   54   1         U8RH_data_L_temp=DHT11_COM();
-C51 COMPILER V9.56.0.0   DHT11                                                             12/21/2018 23:06:37 PAGE 2   
+C51 COMPILER V9.56.0.0   DHT11                                                             12/23/2018 22:03:58 PAGE 2   
 
   55   1         U8T_data_H_temp=DHT11_COM();
   56   1         U8T_data_L_temp=DHT11_COM();
@@ -77,61 +77,57 @@ line level    source
   65   2            pp->RH_L=U8RH_data_L_temp;
   66   2            pp->T_H=U8T_data_H_temp;
   67   2            pp->T_L=U8T_data_L_temp;
-  68   2           
-  69   2            return 0;
-  70   2         }
-  71   1         else
-  72   1         {
-  73   2            pp->RH_H=U8RH_data_H_temp;
-  74   2            pp->RH_L=U8RH_data_L_temp;
-  75   2            pp->T_H=U8T_data_H_temp;
-  76   2            pp->T_L=U8T_data_L_temp;
-  77   2            pp->CheckData = U8checkdata_temp;
-  78   2            return 3;
-  79   2         }
-  80   1      
-  81   1      }
-  82          
-  83          /**
-  84           * DH11总线读取函数
-  85           * @param   
-  86           * @return 0xff--读取异常
-  87           * @brief 从单总线读取到的一字节数据
-  88           **/
-  89          
-  90          u8 DHT11_COM(void)
-  91          {
-  92   1        u8 i;
-  93   1        u8 flag,temp;
-  94   1        u8 comdata;
-  95   1        
-  96   1        for(i=0;i<8;i++)
-  97   1        {
-  98   2          flag = 2;
-  99   2          while((!DHT11_BUS)&&flag++);
- 100   2          if(flag==1)
- 101   2            return 0xff;    
- 102   2          DHT11_Delay_us(2);
- 103   2          temp = 0;
- 104   2          if(DHT11_BUS)
- 105   2            temp = 1;
- 106   2          flag = 2;
- 107   2          while((DHT11_BUS));
- 108   2          if(flag==1)
- 109   2            return 0xff;
- 110   2          comdata <<= 1;
- 111   2          comdata |= temp;
- 112   2        }
- 113   1        
- 114   1        return comdata;
- 115   1      }
-
-C51 COMPILER V9.56.0.0   DHT11                                                             12/21/2018 23:06:37 PAGE 3   
+  68   2            pp->CheckData=U8checkdata_temp;
+  69   2           
+  70   2            return 0;
+  71   2         }
+  72   1         else
+  73   1         {
+  74   2            return 3;
+  75   2         }
+  76   1      
+  77   1      }
+  78          
+  79          /**
+  80           * DH11总线读取函数
+  81           * @param   
+  82           * @return 0xff--读取异常
+  83           * @brief 从单总线读取到的一字节数据
+  84           **/
+  85          
+  86          u8 DHT11_COM(void)
+  87          {
+  88   1        u8 i;
+  89   1        u8 flag,temp;
+  90   1        u8 comdata;
+  91   1        
+  92   1        for(i=0;i<8;i++)
+  93   1        {
+  94   2          flag = 2;
+  95   2          while((!DHT11_BUS)&&flag++);
+  96   2          if(flag==1)
+  97   2            return 0xff;    
+  98   2          DHT11_Delay_us(2);
+  99   2          temp = 0;
+ 100   2          if(DHT11_BUS)
+ 101   2            temp = 1;
+ 102   2          flag = 2;
+ 103   2          while((DHT11_BUS));
+ 104   2          if(flag==1)
+ 105   2            return 0xff;
+ 106   2          comdata <<= 1;
+ 107   2          comdata |= temp;
+ 108   2        }
+ 109   1        
+ 110   1        return comdata;
+ 111   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    390    ----
+   CODE SIZE        =    327    ----
    CONSTANT SIZE    =   ----    ----
+C51 COMPILER V9.56.0.0   DHT11                                                             12/23/2018 22:03:58 PAGE 3   
+
    XDATA SIZE       =   ----      12
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----

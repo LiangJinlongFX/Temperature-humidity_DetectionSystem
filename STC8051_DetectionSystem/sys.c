@@ -2,8 +2,7 @@
 #include "sys.h"
 #include "intrins.h"
 
-static u16 TimerISR_Count=0;
-static void Delay1ms();		//@24.000MHz
+static void Delay1ms();		//@22.1184MHz
 
 sbit LED1 = P1^1;
 
@@ -74,9 +73,9 @@ char* my_strcat(char *pszDest, char *pszSrc)
  * @return 
  * @brief 
  **/
-void my_itoa (u8 n,char *string)
+u8 my_itoa (u8 n,char *string)
 {
-	int i,j,sign;
+	int i,j,sign,k;
 	char s[5];
 	if((sign=n)<0)//记录符号
 	n=-n;//使n成为正数
@@ -85,20 +84,9 @@ void my_itoa (u8 n,char *string)
        s[i++]=n%10+'0';//取下一个数字
 	}
 	while ((n/=10)>0);//删除该数字
-	for(j=i-1;j>=0;j--)//生成的数字是逆序的，所以要逆序输出
+	for(j=i-1,k=0;j>=0;j--,k++)//生成的数字是逆序的，所以要逆序输出
        *string++ = s[j];
 	*string = '\0';
-}
-
-
-void Timer0_ISR_Handler() interrupt 1
-{
-	TL0 = 0x00;                     //reload timer0 low byte
-	TH0 = 0xB8;                			//reload timer0 high byte
-	TimerISR_Count++;
-	if(TimerISR_Count >= 50)
-	{
-		Global_Timer_Flag = 1;
-		TimerISR_Count = 0;
-	}
+	
+	return k;
 }
