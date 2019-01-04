@@ -8,7 +8,7 @@ u8 TimerISR_Count=0;
 u8 Global_LinkID;
 u8 Global_RevDataSize;
 DHT11Data_Type Global_DHT11Structure;
-sbit Switch = P1^7;
+sbit Switch = P2^3;
 void Response_Process(char Request_Type,DHT11Data_Type *pp);
 
 void main(void)
@@ -65,6 +65,7 @@ void main(void)
 			temp = DHT11_ReadData(&Global_DHT11Structure);
 			if(!temp)
 			{
+				Switch = ~Switch;
 				LCD1602_DisplayData(&Global_DHT11Structure);
 			}
 		}

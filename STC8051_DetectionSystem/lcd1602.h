@@ -14,8 +14,8 @@
 
 /* LCD1602 硬件接口配置 */
 #define LCD_DATA P0
-sbit LCD_RW = P1^1;
-sbit LCD_RS = P1^0;
+sbit LCD_RW = P2^6;
+sbit LCD_RS = P2^7;
 sbit LCD_EN = P2^5;
 
 /* LCD1602 调用函数设置 */

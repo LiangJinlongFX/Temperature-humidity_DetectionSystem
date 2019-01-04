@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   MAIN                                                              12/23/2018 22:13:24 PAGE 1   
+C51 COMPILER V9.56.0.0   MAIN                                                              01/02/2019 23:00:32 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
@@ -18,7 +18,7 @@ line level    source
    8          u8 Global_LinkID;
    9          u8 Global_RevDataSize;
   10          DHT11Data_Type Global_DHT11Structure;
-  11          sbit Switch = P1^7;
+  11          sbit Switch = P2^3;
   12          void Response_Process(char Request_Type,DHT11Data_Type *pp);
   13          
   14          void main(void)
@@ -62,7 +62,7 @@ line level    source
   52   2          if(Global_UartRev_Flag)
   53   2          {
   54   3            Global_UartRev_Flag = 0;  //复位接收标记
-C51 COMPILER V9.56.0.0   MAIN                                                              12/23/2018 22:13:24 PAGE 2   
+C51 COMPILER V9.56.0.0   MAIN                                                              01/02/2019 23:00:32 PAGE 2   
 
   55   3            Global_LinkID = Global_UartBuffer[7] - '0'; //获取请求的客户端ID
   56   3            Request_Type = Global_UartBuffer[11];   //获取请求类型
@@ -77,73 +77,74 @@ line level    source
   65   3            temp = DHT11_ReadData(&Global_DHT11Structure);
   66   3            if(!temp)
   67   3            {
-  68   4              LCD1602_DisplayData(&Global_DHT11Structure);
-  69   4            }
-  70   3          }
-  71   2        }
-  72   1      }
-  73          
-  74          void Response_Process(char Request_Type,DHT11Data_Type *pp)
-  75          {
-  76   1        char payload[10];
-  77   1        
-  78   1        if(Request_Type == 1)
-  79   1        {
-  80   2          payload[0] = 0x88;  //响应数据类型
-  81   2          payload[1] = pp->T_H; //湿度整数位
-  82   2          payload[2] = pp->T_L; //湿度小数位
-  83   2          payload[3] = pp->RH_H;    //温度整数位
-  84   2          payload[4] = pp->RH_L;    //温度小数位
-  85   2          payload[5] = 23;  //温湿度校验位
-  86   2          payload[6] = 0x00;  //填充字符'\0'
-  87   2          Uart_SendString("AT+CIPSEND=");
-  88   2          Uart_SendChar(Global_LinkID+'0');
-  89   2          Uart_SendString(",6\r\n");
-  90   2          delay_ms(50);
-  91   2          Uart_SendString(payload);
-  92   2        }
-  93   1        else if(Request_Type == 2)
-  94   1        {
-  95   2          Switch = ~Switch;
-  96   2          payload[0] = 0x89;  //响应数据类型
-  97   2          if(Switch)
-  98   2            payload[1] = 2;
-  99   2          else
- 100   2            payload[1] = 1;
- 101   2          payload[2] = 0x00;  //填充字符'\0'
- 102   2          Uart_SendString("AT+CIPSEND=");
- 103   2          Uart_SendChar('0'+Global_LinkID);
- 104   2          Uart_SendString(",2\r\n");
- 105   2          delay_ms(50);
- 106   2          Uart_SendString(payload);
- 107   2        }
- 108   1      }
- 109          
+  68   4              Switch = ~Switch;
+  69   4              LCD1602_DisplayData(&Global_DHT11Structure);
+  70   4            }
+  71   3          }
+  72   2        }
+  73   1      }
+  74          
+  75          void Response_Process(char Request_Type,DHT11Data_Type *pp)
+  76          {
+  77   1        char payload[10];
+  78   1        
+  79   1        if(Request_Type == 1)
+  80   1        {
+  81   2          payload[0] = 0x88;  //响应数据类型
+  82   2          payload[1] = pp->T_H; //湿度整数位
+  83   2          payload[2] = pp->T_L; //湿度小数位
+  84   2          payload[3] = pp->RH_H;    //温度整数位
+  85   2          payload[4] = pp->RH_L;    //温度小数位
+  86   2          payload[5] = 23;  //温湿度校验位
+  87   2          payload[6] = 0x00;  //填充字符'\0'
+  88   2          Uart_SendString("AT+CIPSEND=");
+  89   2          Uart_SendChar(Global_LinkID+'0');
+  90   2          Uart_SendString(",6\r\n");
+  91   2          delay_ms(50);
+  92   2          Uart_SendString(payload);
+  93   2        }
+  94   1        else if(Request_Type == 2)
+  95   1        {
+  96   2          Switch = ~Switch;
+  97   2          payload[0] = 0x89;  //响应数据类型
+  98   2          if(Switch)
+  99   2            payload[1] = 2;
+ 100   2          else
+ 101   2            payload[1] = 1;
+ 102   2          payload[2] = 0x00;  //填充字符'\0'
+ 103   2          Uart_SendString("AT+CIPSEND=");
+ 104   2          Uart_SendChar('0'+Global_LinkID);
+ 105   2          Uart_SendString(",2\r\n");
+ 106   2          delay_ms(50);
+ 107   2          Uart_SendString(payload);
+ 108   2        }
+ 109   1      }
  110          
- 111          /**
- 112           * 定时器0中断服务函数
- 113           * @param   
- 114           * @return 
- 115           * @brief 
- 116           **/
-C51 COMPILER V9.56.0.0   MAIN                                                              12/23/2018 22:13:24 PAGE 3   
+ 111          
+ 112          /**
+ 113           * 定时器0中断服务函数
+ 114           * @param   
+ 115           * @return 
+ 116           * @brief 
+C51 COMPILER V9.56.0.0   MAIN                                                              01/02/2019 23:00:32 PAGE 3   
 
- 117          void Timer0_ISR_Handler() interrupt 1
- 118          {
- 119   1        ET0 = 0;
- 120   1        TL0 = 0x00;                     //reload timer0 low byte
- 121   1        TH0 = 0xB8;                     //reload timer0 high byte
- 122   1        if(++TimerISR_Count >= 200)
- 123   1        {
- 124   2          Switch = ~Switch;
- 125   2          TimerISR_Count = 0;
- 126   2        }
- 127   1        ET0 =1;
- 128   1      }
+ 117           **/
+ 118          void Timer0_ISR_Handler() interrupt 1
+ 119          {
+ 120   1        ET0 = 0;
+ 121   1        TL0 = 0x00;                     //reload timer0 low byte
+ 122   1        TH0 = 0xB8;                     //reload timer0 high byte
+ 123   1        if(++TimerISR_Count >= 200)
+ 124   1        {
+ 125   2          Switch = ~Switch;
+ 126   2          TimerISR_Count = 0;
+ 127   2        }
+ 128   1        ET0 =1;
+ 129   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    478    ----
+   CODE SIZE        =    481    ----
    CONSTANT SIZE    =    126    ----
    XDATA SIZE       =      8      15
    PDATA SIZE       =   ----    ----

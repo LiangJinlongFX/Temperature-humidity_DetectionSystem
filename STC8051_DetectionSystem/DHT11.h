@@ -14,7 +14,7 @@ typedef struct
 	u8 CheckData;
 }DHT11Data_Type;
 
-sbit DHT11_BUS = P3^2; 
+sbit DHT11_BUS = P2^4; 
 
 //延时函数(us)
 #define DHT11_Delay_us(time) delay_us(time)
