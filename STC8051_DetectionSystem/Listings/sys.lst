@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   SYS                                                               12/23/2018 22:03:57 PAGE 1   
+C51 COMPILER V9.56.0.0   SYS                                                               01/05/2019 01:20:21 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE SYS
@@ -8,106 +8,91 @@ COMPILER INVOKED BY: D:\Program Files\MDK\C51\BIN\C51.EXE sys.c LARGE OPTIMIZE(8
 
 line level    source
 
-   1          #include "reg51.h"
+   1          #include "stc89c5xrc.h"
    2          #include "sys.h"
    3          #include "intrins.h"
    4          
    5          static void Delay1ms();   //@22.1184MHz
    6          
-   7          sbit LED1 = P1^1;
-   8          
-   9          u8 Global_Timer_Flag;
-  10          
-  11          void Timer0_Init(void)  //10毫秒@22.1184MHz
-  12          {
-  13   1        TMOD = 0x01;    //设置定时器模式
-  14   1        TL0 = 0x00;     //设置定时初值
-  15   1        TH0 = 0xB8;     //设置定时初值
-  16   1        TF0 = 0;        //清除TF0标志
-  17   1        TR0 = 1;        //定时器0开始计时
+   7          void delay_ms(unsigned int x)
+   8          {
+   9   1        unsigned int i;
+  10   1        
+  11   1        for(i=0;i<x;i++)
+  12   1          Delay1ms();
+  13   1      }
+  14          
+  15          void delay_us(unsigned int x)
+  16          {
+  17   1        unsigned int i;
   18   1        
-  19   1        ET0 = 1;        //开启定时器0中断
-  20   1      }
-  21          
-  22          void delay_ms(unsigned int x)
-  23          {
-  24   1        unsigned int i;
-  25   1        
-  26   1        for(i=0;i<x;i++)
-  27   1          Delay1ms();
-  28   1      }
-  29          
-  30          void delay_us(unsigned int x)
-  31          {
-  32   1        unsigned int i;
-  33   1        
-  34   1        for(i=0;i<x;i++)
-  35   1        {
-  36   2          _nop_();
-  37   2        }
-  38   1      }
-  39          
-  40          
-  41          void Delay1ms()   //@22.1184MHz
-  42          {
-  43   1        unsigned char i, j;
-  44   1      
-  45   1        _nop_();
-  46   1        i = 4;
-  47   1        j = 146;
-  48   1        do
-  49   1        {
-  50   2          while (--j);
-  51   2        } while (--i);
+  19   1        for(i=0;i<x;i++)
+  20   1        {
+  21   2          _nop_();
+  22   2        }
+  23   1      }
+  24          
+  25          
+  26          void Delay1ms()   //@22.1184MHz
+  27          {
+  28   1        unsigned char i, j;
+  29   1      
+  30   1        _nop_();
+  31   1        i = 4;
+  32   1        j = 146;
+  33   1        do
+  34   1        {
+  35   2          while (--j);
+  36   2        } while (--i);
+  37   1      }
+  38          
+  39          /**
+  40           * 字符串拼接函数
+  41           * @param   *pszDest[目标拼接字符串指针] *pszSrc[源字符串指针]
+  42           * @return  拼接后的字符串指针
+  43           * @brief 
+  44           **/
+  45          char* my_strcat(char *pszDest, char *pszSrc)
+  46          {
+  47   1        while(*pszDest)
+  48   1          pszDest++;
+  49   1        while(*pszDest++ = *pszSrc++);
+  50   1        
+  51   1        return --pszDest;
   52   1      }
   53          
-  54          /**
-C51 COMPILER V9.56.0.0   SYS                                                               12/23/2018 22:03:57 PAGE 2   
+  54          
+C51 COMPILER V9.56.0.0   SYS                                                               01/05/2019 01:20:21 PAGE 2   
 
-  55           * 字符串拼接函数
-  56           * @param   *pszDest[目标拼接字符串指针] *pszSrc[源字符串指针]
-  57           * @return  拼接后的字符串指针
-  58           * @brief 
-  59           **/
-  60          char* my_strcat(char *pszDest, char *pszSrc)
-  61          {
-  62   1        while(*pszDest)
-  63   1          pszDest++;
-  64   1        while(*pszDest++ = *pszSrc++);
-  65   1        
-  66   1        return --pszDest;
-  67   1      }
-  68          
-  69          
-  70          /**
-  71           * 数值转文本
-  72           * @param   
-  73           * @return 
-  74           * @brief 
-  75           **/
-  76          u8 my_itoa (u8 n,char *string)
-  77          {
-  78   1        int i,j,sign,k;
-  79   1        char s[5];
-  80   1        if((sign=n)<0)//记录符号
-  81   1        n=-n;//使n成为正数
-  82   1        i=0;
-  83   1        do{
-  84   2             s[i++]=n%10+'0';//取下一个数字
-  85   2        }
-  86   1        while ((n/=10)>0);//删除该数字
-  87   1        for(j=i-1,k=0;j>=0;j--,k++)//生成的数字是逆序的，所以要逆序输出
-  88   1             *string++ = s[j];
-  89   1        *string = '\0';
-  90   1        
-  91   1        return k;
-  92   1      }
+  55          /**
+  56           * 数值转文本
+  57           * @param   
+  58           * @return 
+  59           * @brief 
+  60           **/
+  61          u8 my_itoa (u8 n,char *string)
+  62          {
+  63   1        int i,j,sign,k;
+  64   1        char s[5];
+  65   1        if((sign=n)<0)//记录符号
+  66   1        n=-n;//使n成为正数
+  67   1        i=0;
+  68   1        do{
+  69   2             s[i++]=n%10+'0';//取下一个数字
+  70   2        }
+  71   1        while ((n/=10)>0);//删除该数字
+  72   1        for(j=i-1,k=0;j>=0;j--,k++)//生成的数字是逆序的，所以要逆序输出
+  73   1             *string++ = s[j];
+  74   1        *string = '\0';
+  75   1        
+  76   1        return k;
+  77   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    389    ----
+   CODE SIZE        =    373    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =      1      23
+   XDATA SIZE       =   ----      23
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

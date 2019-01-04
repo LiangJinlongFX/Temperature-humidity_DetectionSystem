@@ -21,8 +21,6 @@ void main(void)
 	LCD1602_Init();
 	// 初始化串口
 	Uart_Init();
-	// 初始化定时器0
-	//Timer0_Init();
 	// 串口中断设置为最高优先级
 	PS = 1;
 	// 开启全局中断
@@ -65,7 +63,7 @@ void main(void)
 			temp = DHT11_ReadData(&Global_DHT11Structure);
 			if(!temp)
 			{
-				Switch = ~Switch;
+//				Response_Process(1,&Global_DHT11Structure);
 				LCD1602_DisplayData(&Global_DHT11Structure);
 			}
 		}
@@ -88,8 +86,15 @@ void Response_Process(char Request_Type,DHT11Data_Type *pp)
 		Uart_SendString("AT+CIPSEND=");
 		Uart_SendChar(Global_LinkID+'0');
 		Uart_SendString(",6\r\n");
-		delay_ms(50);
-		Uart_SendString(payload);
+		delay_ms(10);
+		//Uart_SendString(payload);
+		Uart_SendChar(payload[0]);
+		Uart_SendChar(payload[1]);
+		Uart_SendChar(payload[2]);
+		Uart_SendChar(payload[3]);
+		Uart_SendChar(payload[4]);
+		Uart_SendChar(payload[5]);
+		
 	}
 	else if(Request_Type == 2)
 	{
@@ -109,21 +114,3 @@ void Response_Process(char Request_Type,DHT11Data_Type *pp)
 }
 
 
-/**
- * 定时器0中断服务函数
- * @param   
- * @return 
- * @brief 
- **/
-void Timer0_ISR_Handler() interrupt 1
-{
-	ET0 = 0;
-	TL0 = 0x00;                     //reload timer0 low byte
-	TH0 = 0xB8;                			//reload timer0 high byte
-	if(++TimerISR_Count >= 200)
-	{
-		Switch = ~Switch;
-		TimerISR_Count = 0;
-	}
-	ET0 =1;
-}
